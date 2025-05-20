@@ -12,93 +12,93 @@ st.set_page_config(
 # Force dark theme and styling
 st.markdown("""
 <style>
-    /* Dark Theme */
-    body {
-        color: white;
-        background-color: #111827;
-    }
-    
-    /* Header Style */
-    .header-container {
-        background-color: #6c3ce9;
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-    
-    .header-title {
-        color: white;
-        font-size: 32px;
-        font-weight: bold;
-    }
-    
-    /* Strategy Card */
-    .strategy-card {
-        background-color: white;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        position: relative;
-    }
-    
-    .strategy-title {
-        color: #333;
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-    
-    .strategy-author {
-        color: #555;
-        font-size: 14px;
-        margin-bottom: 15px;
-    }
-    
-    .strategy-description {
-        color: #333;
-        margin-bottom: 15px;
-    }
-    
-    .strategy-meta {
-        display: flex;
-        justify-content: space-between;
-        color: #666;
-        font-size: 14px;
-    }
-    
-    .like-count {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        color: #666;
-        font-size: 18px;
-    }
-    
-    /* Buttons */
-    .button-container {
-        display: flex;
-        gap: 10px;
-        margin-top: 10px;
-    }
-    
-    /* Override Streamlit Styles */
-    .stButton button {
-        border-radius: 5px;
-        border: 1px solid #333;
-        color: #333;
-        background-color: transparent;
-    }
-    
-    .stTextInput input {
-        border-radius: 20px;
-        background-color: #333;
-        color: white;
-        border: none;
-    }
-    
-    /* Hide Streamlit elements */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+  /* Base dark background + text */
+  body {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    font-family: “Segoe UI”, sans-serif;
+  }
+
+  /* Header */
+  .header-container {
+    background-color: #6366f1;  /* indigo-500 */
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .header-title {
+    color: #f8fafc;  /* slate-50 */
+    font-size: 32px;
+    font-weight: 700;
+  }
+
+  /* Strategy Card */
+  .strategy-card {
+    background-color: #1e293b;  /* slate-800 */
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  }
+  .strategy-title {
+    color: #f8fafc;  /* slate-50 */
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .strategy-author {
+    color: #94a3b8;  /* slate-400 */
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .strategy-description {
+    color: #e2e8f0;  /* slate-200 */
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .strategy-meta {
+    display: flex;
+    justify-content: space-between;
+    color: #cbd5e1;  /* slate-300 */
+    font-size: 13px;
+  }
+  .like-count {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: #cbd5e1;  /* slate-300 */
+    font-size: 18px;
+  }
+
+  /* Buttons */
+  .stButton button {
+    background-color: #4f46e5;  /* indigo-600 */
+    color: #f8fafc;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-weight: 500;
+  }
+  .stButton button:hover {
+    background-color: #4338ca;  /* indigo-700 */
+  }
+
+  /* Search input */
+  .stTextInput input {
+    background-color: #334155;  /* slate-700 */
+    color: #e2e8f0;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+  }
+  .stTextInput input::placeholder {
+    color: #94a3b8;
+  }
+
+  /* Hide Streamlit chrome */
+  #MainMenu, footer, header {
+    visibility: hidden;
+  }
 </style>
 """, unsafe_allow_html=True)
 
