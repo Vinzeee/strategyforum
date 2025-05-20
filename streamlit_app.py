@@ -30,14 +30,15 @@ st.markdown("""
     background-color: #e0e2e6;
 }
 
-.primary-btn button {
+.primary-btn {
     background-color: #1e88e5 !important;
     color: white !important;
     border: none !important;
-}
-
-.primary-btn button:hover {
-    background-color: #1976d2 !important;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
 }
 
 .card {
@@ -216,26 +217,6 @@ if 'view_strategy_id' not in st.session_state:
 if 'view_author_id' not in st.session_state:
     st.session_state.view_author_id = None
 
-# Navigation Functions
-def go_home():
-    st.session_state.page = 'home'
-    st.session_state.view_strategy_id = None
-    st.session_state.view_author_id = None
-
-def view_strategy(strategy_id):
-    st.session_state.page = 'strategy_detail'
-    st.session_state.view_strategy_id = strategy_id
-    st.session_state.view_author_id = None
-
-def view_author(author_id):
-    st.session_state.page = 'home'
-    st.session_state.view_author_id = author_id
-
-def new_strategy_page():
-    st.session_state.page = 'new_strategy'
-    st.session_state.view_strategy_id = None
-    st.session_state.view_author_id = None
-
 # Utility Functions
 def format_date(date_string):
     date_obj = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ")
@@ -289,11 +270,15 @@ col1, col2 = st.columns([7, 2])
 with col2:
     col2a, col2b = st.columns(2)
     with col2a:
-        st.button("Home", on_click=go_home, use_container_width=True)
+        if st.button("Home", key="nav_home"):
+            st.session_state.page = 'home'
+            st.session_state.view_strategy_id = None
+            st.session_state.view_author_id = None
     with col2b:
-        st.markdown('<div class="primary-btn">', unsafe_allow_html=True)
-        st.button("New Strategy", on_click=new_strategy_page, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+        if st.button("New Strategy", key="nav_new"):
+            st.session_state.page = 'new_strategy'
+            st.session_state.view_strategy_id = None
+            st.session_state.view_author_id = None
 
 # Main Content
 if st.session_state.page == 'home':
@@ -305,7 +290,8 @@ if st.session_state.page == 'home':
         author = next((u for u in st.session_state.users if u["id"] == st.session_state.view_author_id), None)
         if author:
             st.info(f"Showing strategies by {author['name']}")
-            st.button("Clear Filter", on_click=go_home)
+            if st.button("Clear Filter", key="clear_filter"):
+                st.session_state.view_author_id = None
     
     # Filter strategies
     filtered_strategies = st.session_state.strategies.copy()
@@ -322,36 +308,34 @@ if st.session_state.page == 'home':
     if not filtered_strategies:
         st.warning("No strategies found matching your criteria.")
     
-    for strategy in filtered_strategies:
+    for idx, strategy in enumerate(filtered_strategies):
         st.markdown(f'<div class="card">', unsafe_allow_html=True)
         
         # Strategy title and meta
         st.markdown(f'<div class="strategy-title">{strategy["title"]}</div>', unsafe_allow_html=True)
         
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            # Make author clickable
-            if st.button(f"By {strategy['author_name']}", key=f"author_{strategy['id']}"):
-                view_author(strategy["author_id"])
-                st.experimental_rerun()
-        with col2:
+        # Author and date
+        auth_col, date_col = st.columns([1, 1])
+        with auth_col:
+            if st.button(f"By {strategy['author_name']}", key=f"author_{idx}"):
+                st.session_state.view_author_id = strategy["author_id"]
+        with date_col:
             st.markdown(f'<div style="text-align: right">{format_date(strategy["date"])}</div>', unsafe_allow_html=True)
         
         # Strategy description
         st.markdown(f'<div class="strategy-description">{get_preview(strategy["description"])}</div>', unsafe_allow_html=True)
         
         # Action buttons
-        col1, col2, col3 = st.columns([1, 1, 5])
-        with col1:
-            if st.button(f"View Details", key=f"view_{strategy['id']}"):
-                view_strategy(strategy["id"])
-                st.experimental_rerun()
-        with col2:
+        view_col, like_col, comment_col = st.columns([1, 1, 5])
+        with view_col:
+            if st.button("View Details", key=f"view_{idx}"):
+                st.session_state.page = 'strategy_detail'
+                st.session_state.view_strategy_id = strategy["id"]
+        with like_col:
             like_text = "Unlike" if strategy["liked"] else "Like"
-            if st.button(f"{like_text} ({strategy['likes']})", key=f"like_{strategy['id']}"):
+            if st.button(f"{like_text}", key=f"like_{idx}"):
                 toggle_like(strategy["id"])
-                st.experimental_rerun()
-        with col3:
+        with comment_col:
             comment_count = len([c for c in st.session_state.comments if c["strategy_id"] == strategy["id"]])
             st.markdown(f"<div style='text-align: right'>💬 {comment_count} comments</div>", unsafe_allow_html=True)
         
@@ -363,21 +347,23 @@ elif st.session_state.page == 'strategy_detail':
     
     if not strategy:
         st.error("Strategy not found")
-        st.button("Back to Home", on_click=go_home)
+        if st.button("Back to Home", key="back_home_error"):
+            st.session_state.page = 'home'
     else:
         # Navigation
-        st.button("← Back to Forum", on_click=go_home)
+        if st.button("← Back to Forum", key="back_to_forum"):
+            st.session_state.page = 'home'
         
         # Strategy details
         st.markdown(f'<div class="card">', unsafe_allow_html=True)
         st.markdown(f'<h2>{strategy["title"]}</h2>', unsafe_allow_html=True)
         
-        col1, col2 = st.columns([1, 1])
-        with col1:
+        auth_col, date_col = st.columns([1, 1])
+        with auth_col:
             if st.button(f"Author: {strategy['author_name']}", key="detail_author"):
-                view_author(strategy["author_id"])
-                st.experimental_rerun()
-        with col2:
+                st.session_state.page = 'home'
+                st.session_state.view_author_id = strategy["author_id"]
+        with date_col:
             st.markdown(f'<div style="text-align: right">{format_date(strategy["date"])}</div>', unsafe_allow_html=True)
         
         st.markdown(f'<div class="strategy-description">{strategy["description"]}</div>', unsafe_allow_html=True)
@@ -386,7 +372,6 @@ elif st.session_state.page == 'strategy_detail':
         like_text = "Unlike" if strategy["liked"] else "Like"
         if st.button(f"{like_text} ({strategy['likes']})", key="detail_like"):
             toggle_like(strategy["id"])
-            st.experimental_rerun()
         
         st.markdown('</div>', unsafe_allow_html=True)
         
@@ -427,7 +412,6 @@ elif st.session_state.page == 'strategy_detail':
             submitted = st.form_submit_button("Post Comment")
             if submitted and new_comment:
                 add_comment(strategy["id"], new_comment)
-                st.experimental_rerun()
         
         # Display comments
         root_comments = [c for c in st.session_state.comments if c["strategy_id"] == strategy["id"] and c["parent_id"] is None]
@@ -436,30 +420,30 @@ elif st.session_state.page == 'strategy_detail':
         if not root_comments:
             st.info("No comments yet. Be the first to comment!")
         
-        for comment in root_comments:
+        for idx, comment in enumerate(root_comments):
             st.markdown(f'<div class="comment-card">', unsafe_allow_html=True)
             
-            col1, col2 = st.columns([1, 1])
-            with col1:
-                if st.button(comment["author_name"], key=f"comment_author_{comment['id']}"):
-                    view_author(comment["author_id"])
-                    st.experimental_rerun()
-            with col2:
+            auth_col, date_col = st.columns([1, 1])
+            with auth_col:
+                if st.button(comment["author_name"], key=f"comment_author_{idx}"):
+                    st.session_state.page = 'home'
+                    st.session_state.view_author_id = comment["author_id"]
+            with date_col:
                 st.markdown(f'<div style="text-align: right">{format_date(comment["date"])}</div>', unsafe_allow_html=True)
             
             st.markdown(f"<p>{comment['text']}</p>", unsafe_allow_html=True)
             
             # Show replies
             replies = [c for c in st.session_state.comments if c["parent_id"] == comment["id"]]
-            for reply in replies:
+            for reply_idx, reply in enumerate(replies):
                 st.markdown(f'<div class="reply-comment">', unsafe_allow_html=True)
                 
-                col1, col2 = st.columns([1, 1])
-                with col1:
-                    if st.button(reply["author_name"], key=f"reply_author_{reply['id']}"):
-                        view_author(reply["author_id"])
-                        st.experimental_rerun()
-                with col2:
+                reply_auth_col, reply_date_col = st.columns([1, 1])
+                with reply_auth_col:
+                    if st.button(reply["author_name"], key=f"reply_author_{idx}_{reply_idx}"):
+                        st.session_state.page = 'home'
+                        st.session_state.view_author_id = reply["author_id"]
+                with reply_date_col:
                     st.markdown(f'<div style="text-align: right">{format_date(reply["date"])}</div>', unsafe_allow_html=True)
                 
                 st.markdown(f"<p>{reply['text']}</p>", unsafe_allow_html=True)
@@ -477,18 +461,14 @@ elif st.session_state.page == 'new_strategy':
         
         col1, col2 = st.columns([1, 1])
         with col1:
-            cancel = st.form_submit_button("Cancel")
-            if cancel:
-                go_home()
-                st.experimental_rerun()
+            if st.form_submit_button("Cancel"):
+                st.session_state.page = 'home'
         with col2:
-            submit = st.form_submit_button("Post Strategy")
-            if submit:
+            if st.form_submit_button("Post Strategy"):
                 if not title:
                     st.error("Title is required")
                 elif not description:
                     st.error("Description is required")
                 else:
                     create_strategy(title, description, visibility)
-                    go_home()
-                    st.experimental_rerun()
+                    st.session_state.page = 'home'
