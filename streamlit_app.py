@@ -87,7 +87,7 @@ p, div, span, h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary:hover {
-    background-color: #1976d2;
+    background-color: #6c90ff;
 }
 
 /* Form styles */
@@ -209,7 +209,7 @@ a {
 }
 
 a:hover {
-    color: #1976d2 !important;
+    color: #6c90ff !important;
 }
 
 .no-comments {
