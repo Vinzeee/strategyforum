@@ -1,287 +1,239 @@
 import streamlit as st
 from datetime import datetime
 
-# Configure the page
-st.set_page_config(
-    page_title="Knead Strategy Forum",
-    page_icon="📊",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
+# Page configuration
+st.set_page_config(page_title="Knead Strategy Forum", layout="wide")
 
-# Force dark theme and styling
-st.markdown("""
-<style>
-  /* Base dark background + text */
-  body {
-    background-color: #0f172a;
-    color: #e2e8f0;
-    font-family: “Segoe UI”, sans-serif;
-  }
+# Initial data definitions
+initial_strategies = [
+    {
+        "id": 1,
+        "title": "Moving Average Crossover Strategy",
+        "author": "Sarah Johnson",
+        "authorId": "sarah123",
+        "description": (
+            "This strategy identifies trend reversals by tracking when shorter-term moving averages "
+            "cross above or below longer-term moving averages. When the 50-day MA crosses above the "
+            "200-day MA, it generates a buy signal (golden cross). When it crosses below, it "
+            "generates a sell signal (death cross)."
+        ),
+        "likes": 42,
+        "liked": False,
+        "date": "2025-05-17T14:30:00",
+        "visibility": "public",
+        "comments": [
+            {"id": 1, "author": "Mark Wilson", "content": "I've been using a variant of this strategy with good results. Have you tried adjusting the timeframes?", "likes": 7, "liked": False},
+            {"id": 2, "author": "Alex Chen",     "content": "What about adding volume confirmation to reduce false signals?", "likes": 3, "liked": False}
+        ]
+    },
+    {
+        "id": 2,
+        "title": "RSI Divergence Trading",
+        "author": "Michael Brown",
+        "authorId": "mike_b",
+        "description": (
+            "This strategy focuses on identifying divergences between price action and RSI indicator. "
+            "When price makes a higher high but RSI makes a lower high (bearish divergence), it suggests "
+            "a potential reversal to the downside. Conversely, when price makes a lower low but RSI makes a "
+            "higher low (bullish divergence), it suggests a potential reversal to the upside."
+        ),
+        "likes": 37,
+        "liked": False,
+        "date": "2025-05-15T09:15:00",
+        "visibility": "public",
+        "comments": [
+            {"id": 1, "author": "Emma Davis",    "content": "I've had mixed results with this. What timeframe do you find works best?", "likes": 5, "liked": False},
+            {"id": 2, "author": "Sarah Johnson","content": "Great strategy. I combine this with volume analysis for better results.", "likes": 8, "liked": False}
+        ]
+    },
+    {
+        "id": 3,
+        "title": "Ichimoku Cloud Strategy",
+        "author": "Alex Chen",
+        "authorId": "alex_c",
+        "description": (
+            "Using the Ichimoku Cloud indicator to identify trend direction, support/resistance levels, "
+            "and potential entry/exit points. When price is above the cloud, the trend is bullish; when below, bearish. "
+            "Cloud crossovers and TK crosses serve as additional signals."
+        ),
+        "likes": 29,
+        "liked": False,
+        "date": "2025-05-12T16:45:00",
+        "visibility": "public",
+        "comments": []
+    }
+]
 
-  /* Header */
-  .header-container {
-    background-color: #6366f1;  /* indigo-500 */
-    padding: 20px;
-    margin-bottom: 24px;
-  }
-  .header-title {
-    color: #f8fafc;  /* slate-50 */
-    font-size: 32px;
-    font-weight: 700;
-  }
-
-  /* Strategy Card */
-  .strategy-card {
-    background-color: #1e293b;  /* slate-800 */
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-  }
-  .strategy-title {
-    color: #f8fafc;  /* slate-50 */
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  .strategy-author {
-    color: #94a3b8;  /* slate-400 */
-    font-size: 14px;
-    margin-bottom: 12px;
-  }
-  .strategy-description {
-    color: #e2e8f0;  /* slate-200 */
-    margin-bottom: 16px;
-    line-height: 1.5;
-  }
-  .strategy-meta {
-    display: flex;
-    justify-content: space-between;
-    color: #cbd5e1;  /* slate-300 */
-    font-size: 13px;
-  }
-  .like-count {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    color: #cbd5e1;  /* slate-300 */
-    font-size: 18px;
-  }
-
-  /* Buttons */
-  .stButton button {
-    background-color: #4f46e5;  /* indigo-600 */
-    color: #f8fafc;
-    border: none;
-    border-radius: 6px;
-    padding: 6px 14px;
-    font-weight: 500;
-  }
-  .stButton button:hover {
-    background-color: #4338ca;  /* indigo-700 */
-  }
-
-  /* Search input */
-  .stTextInput input {
-    background-color: #334155;  /* slate-700 */
-    color: #e2e8f0;
-    border: none;
-    border-radius: 20px;
-    padding: 8px 16px;
-  }
-  .stTextInput input::placeholder {
-    color: #94a3b8;
-  }
-
-  /* Hide Streamlit chrome */
-  #MainMenu, footer, header {
-    visibility: hidden;
-  }
-</style>
-""", unsafe_allow_html=True)
+user_profiles = {
+    "sarah123": {"name": "Sarah Johnson", "karma": 387, "strategies": 14, "following": False},
+    "mike_b":     {"name": "Michael Brown", "karma": 256, "strategies": 8,  "following": True},
+    "alex_c":     {"name": "Alex Chen",     "karma": 192, "strategies": 6,  "following": False},
+    "emma_d":     {"name": "Emma Davis",    "karma": 145, "strategies": 4,  "following": False},
+}
 
 # Initialize session state
 if 'strategies' not in st.session_state:
-    st.session_state.strategies = [
-        {
-            "id": "1",
-            "title": "Moving Average Crossover Strategy",
-            "description": "This strategy identifies trend reversals by tracking when shorter-term moving averages cross above or below longer-term moving averages. When the 50-day moving average crosses above the 200-day moving average (golden cross), it generates a buy signal. When the 50-day moving average crosses below the 200-day moving average (death cross), it generates a sell signal.",
-            "author": "Sarah Johnson",
-            "date": "2025-05-17T10:30:00Z",
-            "likes": 42,
-            "comments": 2
-        },
-        {
-            "id": "2",
-            "title": "RSI Divergence Trading",
-            "description": "This strategy focuses on identifying divergences between price action and RSI indicator. When price makes a higher high but RSI makes a lower high (bearish divergence), it signals a potential trend reversal to the downside. Conversely, when price makes a lower low but RSI makes a higher low (bullish divergence), it signals a potential trend reversal to the upside.",
-            "author": "Michael Brown",
-            "date": "2025-05-15T15:45:00Z",
-            "likes": 37,
-            "comments": 2
-        },
-        {
-            "id": "3",
-            "title": "Ichimoku Cloud Strategy",
-            "description": "Using the Ichimoku Cloud indicator to identify trend direction, support/resistance levels, and potential entry/exit points. When price is above the cloud, the trend is bullish; when price is below the cloud, the trend is bearish. The cloud itself represents support and resistance areas.",
-            "author": "Alex Chen",
-            "date": "2025-05-13T09:15:00Z",
-            "likes": 29,
-            "comments": 0
-        }
-    ]
+    st.session_state.strategies = initial_strategies.copy()
+if 'user_profiles' not in st.session_state:
+    st.session_state.user_profiles = user_profiles.copy()
 
-if 'page' not in st.session_state:
-    st.session_state.page = 'home'
-if 'selected_strategy' not in st.session_state:
-    st.session_state.selected_strategy = None
+if 'view' not in st.session_state:
+    st.session_state.view = 'forum'
+if 'selected_id' not in st.session_state:
+    st.session_state.selected_id = None
+if 'active_profile' not in st.session_state:
+    st.session_state.active_profile = None
+if 'search' not in st.session_state:
+    st.session_state.search = ''
+if 'new_strategy' not in st.session_state:
+    st.session_state.new_strategy = {"title": "", "description": "", "visibility": "public"}
+if 'new_comment' not in st.session_state:
+    st.session_state.new_comment = ""
 
 # Helper functions
-def format_date(date_str):
-    date = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
-    return date.strftime("May %d, %Y")
 
-# Display header
-st.markdown('<div class="header-container"><div class="header-title">Knead Strategy Forum</div></div>', unsafe_allow_html=True)
+def format_date(dt_str):
+    dt = datetime.fromisoformat(dt_str)
+    return dt.strftime("%b %d, %Y %I:%M %p")
 
-# Search and button
+
+def toggle_like_strategy(sid):
+    for s in st.session_state.strategies:
+        if s['id'] == sid:
+            if s.get('liked', False):
+                s['likes'] -= 1
+            else:
+                s['likes'] += 1
+            s['liked'] = not s.get('liked', False)
+            break
+
+
+def toggle_like_comment(sid, cid):
+    for s in st.session_state.strategies:
+        if s['id'] == sid:
+            for c in s['comments']:
+                if c['id'] == cid:
+                    if c.get('liked', False):
+                        c['likes'] -= 1
+                    else:
+                        c['likes'] += 1
+                    c['liked'] = not c.get('liked', False)
+                    return
+
+
+def toggle_follow_user(uid):
+    profile = st.session_state.user_profiles.get(uid)
+    if profile:
+        profile['following'] = not profile['following']
+
+# Header with search and "New Strategy" button
 col1, col2 = st.columns([4, 1])
 with col1:
-    search = st.text_input("Search strategies...", label_visibility="collapsed")
+    search = st.text_input("🔍 Search strategies...", value=st.session_state.search)
+    st.session_state.search = search
 with col2:
-    if st.button("New Strategy"):
-        st.session_state.page = 'new'
+    if st.session_state.view == 'forum' and st.button("New Strategy"):
+        st.session_state.view = 'newStrategy'
 
-# Display content
-if st.session_state.page == 'home':
-    # Filter strategies
-    strategies = st.session_state.strategies
-    if search:
-        strategies = [s for s in strategies if search.lower() in s['title'].lower()]
-    
-    # Display strategies
-    for strategy in strategies:
-        st.markdown(f"""
-        <div class="strategy-card">
-            <div class="like-count">{strategy['likes']}</div>
-            <div class="strategy-title">{strategy['title']}</div>
-            <div class="strategy-author">by {strategy['author']}</div>
-            <div class="strategy-description">{strategy['description']}</div>
-            <div class="strategy-meta">
-                <div>💬 {strategy['comments']} comments</div>
-                <div>{format_date(strategy['date'])}</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Buttons
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("View Details", key=f"view_{strategy['id']}"):
-                st.session_state.page = 'detail'
-                st.session_state.selected_strategy = strategy['id']
-        with col2:
-            if st.button("Like", key=f"like_{strategy['id']}"):
-                # Simulate like action
-                pass
+st.markdown("---")
 
-elif st.session_state.page == 'detail':
-    # Get selected strategy
-    strategy = next((s for s in st.session_state.strategies if s['id'] == st.session_state.selected_strategy), None)
-    
-    if strategy:
-        # Back button
+# Forum list view
+if st.session_state.view == 'forum':
+    filtered = [s for s in st.session_state.strategies
+                if search.lower() in s['title'].lower() or search.lower() in s['author'].lower()]
+
+    if not filtered:
+        st.info("No strategies match your search.")
+    for s in filtered:
+        container = st.container()
+        cols = container.columns([8, 1, 1])
+        with cols[0]:
+            st.markdown(f"### {s['title']}")
+            st.write(f"by [{s['author']}](#) | {format_date(s['date'])}")
+            st.write(s['description'])
+            st.write(f"💬 {len(s['comments'])} comments")
+        with cols[1]:
+            if st.button(f"💖 {s['likes']}", key=f"like_{s['id']}"):
+                toggle_like_strategy(s['id'])
+        with cols[2]:
+            if st.button("View", key=f"view_{s['id']}"):
+                st.session_state.selected_id = s['id']
+                st.session_state.view = 'strategyDetail'
+
+# New strategy form view
+elif st.session_state.view == 'newStrategy':
+    if st.button("← Back to Forum"):
+        st.session_state.view = 'forum'
+    st.header("Create New Strategy")
+    ns = st.session_state.new_strategy
+    ns['title'] = st.text_input("Title", ns['title'])
+    ns['description'] = st.text_area("Description", ns['description'], height=200)
+    ns['visibility'] = st.radio("Visibility", ['public', 'private'], index=0 if ns['visibility']=='public' else 1)
+    if st.button("Post Strategy"):
+        # build new strategy entry
+        new_id = max([s['id'] for s in st.session_state.strategies]) + 1
+        entry = {
+            'id': new_id,
+            'title': ns['title'],
+            'author': 'You',
+            'authorId': 'you',
+            'description': ns['description'],
+            'likes': 0,
+            'liked': False,
+            'date': datetime.utcnow().isoformat(),
+            'visibility': ns['visibility'],
+            'comments': []
+        }
+        st.session_state.strategies.insert(0, entry)
+        st.success("Strategy posted!")
+        st.session_state.new_strategy = {"title": "", "description": "", "visibility": "public"}
+        st.session_state.view = 'forum'
+
+# Strategy detail + comments view
+elif st.session_state.view == 'strategyDetail':
+    # find selected strategy
+    strat = next((x for x in st.session_state.strategies if x['id'] == st.session_state.selected_id), None)
+    if strat:
         if st.button("← Back to Forum"):
-            st.session_state.page = 'home'
-            st.session_state.selected_strategy = None
-        
-        # Display strategy details
-        st.markdown(f"""
-        <div class="strategy-card">
-            <div class="like-count">{strategy['likes']}</div>
-            <div class="strategy-title">{strategy['title']}</div>
-            <div class="strategy-author">by {strategy['author']}</div>
-            <div class="strategy-description">{strategy['description']}</div>
-            <div class="strategy-meta">
-                <div>{format_date(strategy['date'])}</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Like button
-        if st.button("Like", key="detail_like"):
-            # Simulate like action
-            pass
-        
-        # Strategy metrics
-        st.subheader("Strategy Metrics")
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.metric("Win Rate", "68%")
-        with col2:
-            st.metric("Risk-Reward", "1:2.5")
-        with col3:
-            st.metric("Max Drawdown", "12.4%")
-        with col4:
-            st.metric("Sharpe Ratio", "1.8")
-        
-        # Comments
-        st.subheader("Comments")
-        
+            st.session_state.view = 'forum'
+        st.title(strat['title'])
+        like_label = f"💖 {strat['likes']}"
+        if st.button(like_label, key="detail_like"):
+            toggle_like_strategy(strat['id'])
+        st.write(f"by [{strat['author']}](#) | {format_date(strat['date'])}")
+        st.write(strat['description'])
+        st.subheader(f"Comments ({len(strat['comments'])})")
+        for c in strat['comments']:
+            ccols = st.columns([8, 1])
+            with ccols[0]:
+                st.markdown(f"**{c['author']}**: {c['content']}")
+            with ccols[1]:
+                if st.button(f"👍 {c['likes']}", key=f"clike_{c['id']}"):
+                    toggle_like_comment(strat['id'], c['id'])
         # Comment form
-        with st.form("comment_form"):
-            comment = st.text_area("Add a comment")
-            submitted = st.form_submit_button("Post Comment")
-            if submitted and comment:
-                st.success("Comment added!")
-        
-        # Sample comments
-        if strategy['comments'] > 0:
-            st.markdown("""
-            <div style="background-color: #f8f9fa; border-radius: 5px; padding: 10px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span style="color: #333; font-weight: bold;">Michael Brown</span>
-                    <span style="color: #666; font-size: 12px;">May 18, 2025</span>
-                </div>
-                <p style="color: #333;">I've been testing this strategy for the past month and have seen consistent results. The key is to be patient and wait for clear signals rather than forcing trades.</p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            if strategy['comments'] > 1:
-                st.markdown("""
-                <div style="background-color: #f8f9fa; border-radius: 5px; padding: 10px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <span style="color: #333; font-weight: bold;">Alex Chen</span>
-                        <span style="color: #666; font-size: 12px;">May 16, 2025</span>
-                    </div>
-                    <p style="color: #333;">Have you tried combining this with volume confirmation? I find it improves the reliability of the signals significantly.</p>
-                </div>
-                """, unsafe_allow_html=True)
-    else:
-        st.error("Strategy not found")
-        if st.button("Back to Forum"):
-            st.session_state.page = 'home'
-            st.session_state.selected_strategy = None
+        st.text_area("Add a comment...", key='new_comment')
+        if st.button("Post Comment") and st.session_state.new_comment.strip():
+            new_c = {
+                'id': len(strat['comments']) + 1,
+                'author': 'You',
+                'content': st.session_state.new_comment,
+                'likes': 0,
+                'liked': False
+            }
+            strat['comments'].append(new_c)
+            st.session_state.new_comment = ''
+            st.experimental_rerun()
 
-elif st.session_state.page == 'new':
-    st.subheader("Create New Strategy")
-    
-    with st.form("new_strategy_form"):
-        title = st.text_input("Title")
-        description = st.text_area("Description", height=200)
-        visibility = st.selectbox("Visibility", ["Public", "Private"])
-        
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            if st.form_submit_button("Cancel"):
-                st.session_state.page = 'home'
-        with col2:
-            if st.form_submit_button("Post Strategy"):
-                if title and description:
-                    st.session_state.page = 'home'
-                    st.success("Strategy posted!")
-                else:
-                    st.error("Please fill out all fields")
+# User profile sidebar
+if st.session_state.active_profile:
+    profile = st.session_state.user_profiles.get(st.session_state.active_profile)
+    if profile:
+        st.sidebar.header("User Profile")
+        st.sidebar.write(f"**{profile['name']}**")
+        st.sidebar.write(f"Karma Score: {profile['karma']}")
+        st.sidebar.write(f"Strategies Posted: {profile['strategies']}")
+        follow_label = "Unfollow" if profile['following'] else "Follow"
+        if st.sidebar.button(follow_label):
+            toggle_follow_user(st.session_state.active_profile)
+        if st.sidebar.button("Close Profile"):
+            st.session_state.active_profile = None
