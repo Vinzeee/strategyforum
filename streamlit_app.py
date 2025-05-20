@@ -19,14 +19,19 @@ footer {visibility: hidden;}
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-# Custom CSS for styling
+# Custom CSS for styling with high contrast
 st.markdown("""
 <style>
 /* Base Styles */
 body {
     font-family: 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
-    color: #333;
+    color: #000;
     background-color: #f5f7fa;
+}
+
+/* Make all text darker for better readability */
+p, div, span, h1, h2, h3, h4, h5, h6 {
+    color: #000 !important;
 }
 
 /* Card Style */
@@ -42,19 +47,21 @@ body {
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 10px;
+    color: #000 !important;
 }
 
 .strategy-meta {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
-    color: #666;
+    color: #000;
     margin-bottom: 15px;
 }
 
 .strategy-description {
     margin-bottom: 20px;
     line-height: 1.6;
+    color: #000 !important;
 }
 
 .strategy-actions {
@@ -66,6 +73,7 @@ body {
     display: flex;
     align-items: center;
     margin-right: 20px;
+    color: #000;
 }
 
 .btn-primary {
@@ -91,26 +99,29 @@ label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
+    color: #000;
 }
 
 textarea, select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #000;
     border-radius: 4px;
+    color: #000;
 }
 
 .error {
-    color: #ff4757;
+    color: #ff0000;
     font-size: 14px;
     margin-top: 4px;
+    font-weight: bold;
 }
 
 /* Strategy detail */
 .strategy-header {
     margin-bottom: 24px;
     padding-bottom: 16px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #000;
 }
 
 .metrics-grid {
@@ -124,17 +135,20 @@ textarea, select {
     background-color: #f5f7fa;
     border-radius: 6px;
     padding: 16px;
+    border: 1px solid #ddd;
 }
 
 .metric-label {
     font-size: 14px;
-    color: #666;
+    color: #000;
     margin-bottom: 4px;
+    font-weight: 500;
 }
 
 .metric-value {
     font-size: 24px;
     font-weight: 600;
+    color: #000;
 }
 
 /* Comment styles */
@@ -143,6 +157,7 @@ textarea, select {
     border-radius: 6px;
     padding: 15px;
     margin-bottom: 10px;
+    border: 1px solid #ddd;
 }
 
 .comment-header {
@@ -153,17 +168,54 @@ textarea, select {
 
 .comment-author {
     font-weight: 500;
-    color: #1e88e5;
+    color: #000;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: #000;
 }
 
 .comment-content {
     margin-bottom: 5px;
+    color: #000;
 }
 
 .comment-replies {
     margin-left: 30px;
     padding-left: 10px;
-    border-left: 2px solid #e0e0e0;
+    border-left: 2px solid #000;
+}
+
+/* Fix Streamlit default styles */
+.stButton > button {
+    color: #000 !important;
+    border: 1px solid #000 !important;
+}
+
+.stTextInput > div > div > input {
+    color: #000 !important;
+}
+
+.stTextArea > div > div > textarea {
+    color: #000 !important;
+}
+
+/* Links */
+a {
+    color: #0000EE !important;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+a:hover {
+    color: #1976d2 !important;
+}
+
+.no-comments {
+    text-align: center;
+    padding: 20px;
+    color: #000;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -334,13 +386,21 @@ if 'selected_strategy' not in st.session_state:
 if 'selected_author' not in st.session_state:
     st.session_state.selected_author = None
 
-# Header
-col1, col2 = st.columns([3, 1])
-with col1:
-    st.title("Knead Strategy Forum")
+# Header with better contrast
+st.markdown("<h1 style='color: #000 !important;'>Knead Strategy Forum</h1>", unsafe_allow_html=True)
+
+# Navigation buttons
+col1, col2 = st.columns([6, 1])
 with col2:
-    st.button("Home", key="home_btn", on_click=lambda: setattr(st.session_state, 'page', 'home'))
-    st.button("New Strategy", key="new_btn", on_click=lambda: setattr(st.session_state, 'page', 'new'))
+    col2a, col2b = st.columns(2)
+    with col2a:
+        if st.button("Home", key="home_btn", use_container_width=True):
+            st.session_state.page = 'home'
+            st.experimental_rerun()
+    with col2b:
+        if st.button("New Strategy", key="new_btn", use_container_width=True):
+            st.session_state.page = 'new'
+            st.experimental_rerun()
 
 # Main content
 if st.session_state.page == 'home':
@@ -350,7 +410,7 @@ if st.session_state.page == 'home':
     # Author filter display
     if st.session_state.selected_author:
         author_name = next((user["name"] for user in st.session_state.users if user["id"] == st.session_state.selected_author), "Unknown")
-        st.info(f"Showing strategies by {author_name}")
+        st.markdown(f"<div style='background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 15px; color: #000 !important;'>Showing strategies by <strong>{author_name}</strong></div>", unsafe_allow_html=True)
         if st.button("Clear Filter"):
             st.session_state.selected_author = None
             st.experimental_rerun()
@@ -365,7 +425,7 @@ if st.session_state.page == 'home':
         filtered_strategies.append(strategy)
     
     if not filtered_strategies:
-        st.warning("No strategies found. Try adjusting your filters.")
+        st.markdown("<div style='text-align: center; padding: 30px; color: #000 !important;'>No strategies found. Try adjusting your filters.</div>", unsafe_allow_html=True)
     
     # Display strategies
     for strategy in filtered_strategies:
@@ -374,17 +434,17 @@ if st.session_state.page == 'home':
             <div class="strategy-card">
                 <div class="strategy-title">{strategy["title"]}</div>
                 <div class="strategy-meta">
-                    <div>By <a href="#" onclick="return false;">{strategy["author_name"]}</a></div>
-                    <div>{format_date(strategy["date"])}</div>
+                    <div style="color: #000 !important;">By <a href="#" onclick="return false;">{strategy["author_name"]}</a></div>
+                    <div style="color: #000 !important;">{format_date(strategy["date"])}</div>
                 </div>
-                <div class="strategy-description">
+                <div class="strategy-description" style="color: #000 !important;">
                     {get_description_preview(strategy["description"])}
                 </div>
                 <div class="strategy-actions">
-                    <div class="likes">
+                    <div class="likes" style="color: #000 !important;">
                         ❤️ {strategy["likes"]}
                     </div>
-                    <div>
+                    <div style="color: #000 !important;">
                         💬 {len([c for c in st.session_state.comments if c["strategy_id"] == strategy["id"]])}
                     </div>
                 </div>
@@ -405,7 +465,7 @@ if st.session_state.page == 'home':
 
 elif st.session_state.page == 'new':
     # New Strategy Form
-    st.header("Create New Strategy")
+    st.markdown("<h2 style='color: #000 !important;'>Create New Strategy</h2>", unsafe_allow_html=True)
     
     with st.form("new_strategy_form"):
         title = st.text_input("Title", key="title_input")
@@ -438,18 +498,18 @@ elif st.session_state.page == 'detail':
                 st.session_state.page = 'home'
                 st.experimental_rerun()
             
-            st.header(strategy["title"])
+            st.markdown(f"<h2 style='color: #000 !important;'>{strategy['title']}</h2>", unsafe_allow_html=True)
             
             # Strategy metadata
             st.markdown(f"""
             <div class="strategy-meta">
-                <div>By <a href="#" onclick="return false;">{strategy["author_name"]}</a></div>
-                <div>{format_date(strategy["date"])}</div>
+                <div style="color: #000 !important;">By <a href="#" onclick="return false;">{strategy["author_name"]}</a></div>
+                <div style="color: #000 !important;">{format_date(strategy["date"])}</div>
             </div>
             """, unsafe_allow_html=True)
             
             # Strategy content
-            st.markdown(f"<div class='strategy-description'>{strategy['description']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='strategy-description' style='color: #000 !important;'>{strategy['description']}</div>", unsafe_allow_html=True)
             
             # Like button
             like_text = "Unlike" if strategy["liked"] else "Like"
@@ -458,43 +518,43 @@ elif st.session_state.page == 'detail':
                 st.experimental_rerun()
             
             # Strategy metrics
-            st.subheader("Strategy Metrics")
+            st.markdown("<h3 style='color: #000 !important;'>Strategy Metrics</h3>", unsafe_allow_html=True)
             col1, col2, col3, col4 = st.columns(4)
             
             with col1:
                 st.markdown("""
                 <div class="metric">
-                    <div class="metric-label">Win Rate</div>
-                    <div class="metric-value">68%</div>
+                    <div class="metric-label" style="color: #000 !important;">Win Rate</div>
+                    <div class="metric-value" style="color: #000 !important;">68%</div>
                 </div>
                 """, unsafe_allow_html=True)
             
             with col2:
                 st.markdown("""
                 <div class="metric">
-                    <div class="metric-label">Risk-Reward</div>
-                    <div class="metric-value">1:2.5</div>
+                    <div class="metric-label" style="color: #000 !important;">Risk-Reward</div>
+                    <div class="metric-value" style="color: #000 !important;">1:2.5</div>
                 </div>
                 """, unsafe_allow_html=True)
             
             with col3:
                 st.markdown("""
                 <div class="metric">
-                    <div class="metric-label">Max Drawdown</div>
-                    <div class="metric-value">12.4%</div>
+                    <div class="metric-label" style="color: #000 !important;">Max Drawdown</div>
+                    <div class="metric-value" style="color: #000 !important;">12.4%</div>
                 </div>
                 """, unsafe_allow_html=True)
             
             with col4:
                 st.markdown("""
                 <div class="metric">
-                    <div class="metric-label">Sharpe Ratio</div>
-                    <div class="metric-value">1.8</div>
+                    <div class="metric-label" style="color: #000 !important;">Sharpe Ratio</div>
+                    <div class="metric-value" style="color: #000 !important;">1.8</div>
                 </div>
                 """, unsafe_allow_html=True)
             
             # Comments section
-            st.subheader("Comments")
+            st.markdown("<h3 style='color: #000 !important;'>Comments</h3>", unsafe_allow_html=True)
             
             # Add comment form
             with st.form("add_comment_form"):
@@ -510,16 +570,16 @@ elif st.session_state.page == 'detail':
             comments.sort(key=lambda x: x["date"], reverse=True)
             
             if not comments:
-                st.info("No comments yet. Be the first to comment!")
+                st.markdown("<div style='text-align: center; padding: 20px; color: #000 !important;'>No comments yet. Be the first to comment!</div>", unsafe_allow_html=True)
             
             def render_comment(comment, level=0):
                 st.markdown(f"""
                 <div class="comment-item" style="margin-left: {level * 20}px;">
                     <div class="comment-header">
-                        <span class="comment-author">{comment["author_name"]}</span>
-                        <span>{format_date(comment["date"])}</span>
+                        <span class="comment-author" style="color: #000 !important;">{comment["author_name"]}</span>
+                        <span class="comment-date" style="color: #000 !important;">{format_date(comment["date"])}</span>
                     </div>
-                    <div class="comment-content">{comment["text"]}</div>
+                    <div class="comment-content" style="color: #000 !important;">{comment["text"]}</div>
                 </div>
                 """, unsafe_allow_html=True)
                 
@@ -531,7 +591,7 @@ elif st.session_state.page == 'detail':
             for comment in comments:
                 render_comment(comment)
         else:
-            st.error("Strategy not found")
+            st.markdown("<div style='color: #ff0000; padding: 20px;'>Strategy not found</div>", unsafe_allow_html=True)
             if st.button("Back to Forum"):
                 st.session_state.page = 'home'
                 st.experimental_rerun()
