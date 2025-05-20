@@ -10,73 +10,150 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for high contrast
+# Custom CSS for purple color scheme
 st.markdown("""
 <style>
 /* Base Styles */
-.main * {
-    color: black !important;
+body {
+    font-family: 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
 }
 
-.stButton button {
-    background-color: #f0f2f6;
-    border: 1px solid #aaa !important;
-    color: black !important;
-    font-weight: 500;
+/* Header */
+.header {
+    background-color: #5E35B1;
+    color: white;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.stButton button:hover {
-    border: 1px solid #666 !important;
-    background-color: #e0e2e6;
-}
-
-.primary-btn {
-    background-color: #1e88e5 !important;
+.header h1 {
     color: white !important;
-    border: none !important;
-    padding: 10px 15px;
-    border-radius: 4px;
-    font-weight: 500;
-    text-align: center;
-    cursor: pointer;
+    margin: 0;
+    font-weight: 600;
 }
 
-.card {
+/* Strategy Card */
+.strategy-card {
     background-color: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #f0f0f0;
 }
 
 .strategy-title {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
+    color: #333;
 }
 
-.strategy-meta {
-    margin-bottom: 10px;
+.author-line {
     font-size: 14px;
+    color: #666;
+    margin-bottom: 1rem;
 }
 
 .strategy-description {
-    margin-bottom: 15px;
+    color: #444;
+    margin-bottom: 1rem;
+    line-height: 1.6;
 }
 
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.comments-count {
+    display: flex;
+    align-items: center;
+    color: #666;
+    font-size: 14px;
+}
+
+.date {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Likes */
+.likes {
+    color: #666;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+.likes svg {
+    margin-right: 0.25rem;
+}
+
+/* Comments */
 .comment-card {
-    background-color: #f8f9fa;
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 10px;
+    background-color: #f9f9fb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
     border: 1px solid #eee;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #333;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: #777;
+}
+
+.comment-content {
+    margin-top: 0.5rem;
+    color: #333;
+}
+
+.reply-comment {
+    margin-left: 2rem;
+    margin-top: 0.75rem;
+    padding-left: 1rem;
+    border-left: 2px solid #ddd;
+}
+
+/* Form elements */
+.btn-primary {
+    background-color: #5E35B1 !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.stButton button {
+    border-radius: 5px !important;
+}
+
+.strategy-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 1.5rem 0;
 }
 
 .metric-card {
     background-color: #f8f9fa;
-    border-radius: 6px;
-    padding: 10px;
+    border-radius: 8px;
+    padding: 1rem;
     text-align: center;
     border: 1px solid #eee;
 }
@@ -84,20 +161,76 @@ st.markdown("""
 .metric-value {
     font-size: 24px;
     font-weight: 600;
+    color: #5E35B1;
 }
 
 .metric-label {
     font-size: 14px;
+    color: #666;
 }
 
-.reply-comment {
-    margin-left: 30px;
-    border-left: 2px solid #aaa;
-    padding-left: 10px;
-}
-
+/* Remove Streamlit styling */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
+.stButton {
+    margin-bottom: 0 !important;
+}
+
+/* Custom search box */
+.search-container {
+    display: flex;
+    align-items: center;
+    max-width: 600px;
+    margin-bottom: 2rem;
+    border-radius: 50px;
+    background-color: white;
+    padding: 0.25rem 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.search-container input {
+    flex: 1;
+    border: none;
+    padding: 0.5rem;
+    font-size: 16px;
+    background: transparent;
+}
+
+.search-container input:focus {
+    outline: none;
+}
+
+/* New Strategy Button */
+.new-strategy-btn {
+    background-color: white;
+    color: #5E35B1 !important;
+    border: 1px solid #5E35B1 !important;
+    padding: 0.5rem 1.25rem;
+    border-radius: 50px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* Override for dark text */
+.strategy-title, .strategy-description, .comment-content, h1, h2, h3, p {
+    color: #333 !important;
+}
+
+/* Like button */
+.like-area {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.like-count {
+    margin-left: 8px;
+    font-size: 18px;
+    color: #666;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -106,46 +239,50 @@ if 'strategies' not in st.session_state:
     st.session_state.strategies = [
         {
             "id": "1",
-            "title": "Mean Reversion Strategy for Forex",
-            "description": "This strategy identifies overbought and oversold conditions in currency pairs. It uses Bollinger Bands and RSI indicators to identify potential reversal points. When price touches the upper Bollinger Band and RSI is above 70, it signals a sell opportunity. Conversely, when price touches the lower Bollinger Band and RSI is below 30, it signals a buy opportunity. The strategy includes proper position sizing (1% risk per trade) and implements a 2:1 reward-to-risk ratio for all trades with proper stop losses.",
+            "title": "Moving Average Crossover Strategy",
+            "description": "This strategy identifies trend reversals by tracking when shorter-term moving averages cross above or below longer-term moving averages. When the 50-day moving average crosses above the 200-day moving average (golden cross), it generates a buy signal. When the 50-day moving average crosses below the 200-day moving average (death cross), it generates a sell signal. The strategy works best in trending markets and filters out market noise.",
             "author_id": "1",
-            "author_name": "Alex Johnson",
-            "date": "2025-05-15T10:30:00Z",
+            "author_name": "Sarah Johnson",
+            "date": "2025-05-17T10:30:00Z",
             "likes": 42,
             "liked": False,
+            "comments": 2,
             "visibility": "public"
         },
         {
             "id": "2",
-            "title": "Trend Following Strategy with Moving Averages",
-            "description": "This strategy focuses on capturing strong market trends using multiple moving averages. It uses a combination of 9 EMA, 21 EMA, and 50 SMA to identify trend direction and potential entry points. When the 9 EMA crosses above the 21 EMA and both are above the 50 SMA, it generates a buy signal. When the 9 EMA crosses below the 21 EMA and both are below the 50 SMA, it generates a sell signal. The strategy performs best in trending markets and includes trailing stops to maximize profits during strong trends.",
+            "title": "RSI Divergence Trading",
+            "description": "This strategy focuses on identifying divergences between price action and RSI indicator. When price makes a higher high but RSI makes a lower high (bearish divergence), it signals a potential trend reversal to the downside. Conversely, when price makes a lower low but RSI makes a higher low (bullish divergence), it signals a potential trend reversal to the upside. RSI divergence is especially effective for finding market turning points.",
             "author_id": "2",
-            "author_name": "Maya Rodriguez",
-            "date": "2025-05-14T15:45:00Z",
-            "likes": 38,
+            "author_name": "Michael Brown",
+            "date": "2025-05-15T15:45:00Z",
+            "likes": 37,
             "liked": False,
+            "comments": 2,
             "visibility": "public"
         },
         {
             "id": "3",
-            "title": "Options Iron Condor for Low Volatility Markets",
-            "description": "This options strategy capitalizes on low volatility environments using iron condors. By selling both an out-of-the-money call spread and an out-of-the-money put spread with the same expiration date, this strategy profits when the underlying asset stays within a specific price range. The ideal setup is during periods of low implied volatility and no expected major news events. Position sizing is critical, with maximum risk limited to 2% of account per trade.",
+            "title": "Ichimoku Cloud Strategy",
+            "description": "Using the Ichimoku Cloud indicator to identify trend direction, support/resistance levels, and potential entry/exit points. When price is above the cloud, the trend is bullish; when price is below the cloud, the trend is bearish. The cloud itself represents support and resistance areas. The strategy also uses Tenkan-sen and Kijun-sen lines for signals and the Chikou Span for confirmation.",
             "author_id": "3",
-            "author_name": "Tao Chen",
+            "author_name": "Alex Chen",
             "date": "2025-05-13T09:15:00Z",
-            "likes": 27,
+            "likes": 29,
             "liked": False,
+            "comments": 0,
             "visibility": "public"
         },
         {
             "id": "4",
-            "title": "Volatility Breakout for Intraday Trading",
-            "description": "This intraday strategy captures explosive price movements following tight consolidation periods. It waits for price to compress (measured by decreasing Average True Range) followed by a surge in volume and price movement outside the consolidation range. The strategy works best during the first 2 hours of market open or near significant news events. Entry is triggered when price breaks above/below the consolidation with volume confirmation, with tight stop losses placed just inside the consolidation range.",
+            "title": "Bollinger Band Squeeze Strategy",
+            "description": "This strategy identifies periods of low volatility followed by volatility expansion. When Bollinger Bands tighten (the squeeze), it suggests a period of consolidation before a strong price movement. The strategy waits for a breakout from the squeeze, confirmed by an increase in volume. The direction of the breakout determines the trade direction. It's effective across multiple timeframes and markets.",
             "author_id": "1",
-            "author_name": "Alex Johnson",
-            "date": "2025-05-12T14:20:00Z",
+            "author_name": "Sarah Johnson",
+            "date": "2025-05-10T14:20:00Z",
             "likes": 31,
             "liked": False,
+            "comments": 4,
             "visibility": "public"
         }
     ]
@@ -156,28 +293,37 @@ if 'comments' not in st.session_state:
             "id": "101",
             "strategy_id": "1",
             "author_id": "2",
-            "author_name": "Maya Rodriguez",
+            "author_name": "Michael Brown",
             "text": "I've been testing this strategy for the past month and have seen consistent results. The key is to be patient and wait for clear signals rather than forcing trades.",
-            "date": "2025-05-16T08:30:00Z",
+            "date": "2025-05-18T08:30:00Z",
             "parent_id": None
         },
         {
             "id": "102",
             "strategy_id": "1",
             "author_id": "3",
-            "author_name": "Tao Chen",
-            "text": "Have you tried adjusting the RSI thresholds for different currency pairs? I've found that some pairs work better with custom settings.",
-            "date": "2025-05-16T10:15:00Z",
+            "author_name": "Alex Chen",
+            "text": "Have you tried combining this with volume confirmation? I find it improves the reliability of the signals significantly.",
+            "date": "2025-05-18T10:15:00Z",
             "parent_id": None
         },
         {
             "id": "103",
-            "strategy_id": "1",
+            "strategy_id": "2",
             "author_id": "1",
-            "author_name": "Alex Johnson",
-            "text": "Good point! For EUR/USD I use 75/25 thresholds instead of the standard 70/30.",
+            "author_name": "Sarah Johnson",
+            "text": "Great strategy. I've found adding a trend filter makes this even more effective, only taking divergence trades in the direction of the larger trend.",
             "date": "2025-05-16T11:05:00Z",
-            "parent_id": "102"
+            "parent_id": None
+        },
+        {
+            "id": "104",
+            "strategy_id": "2",
+            "author_id": "3",
+            "author_name": "Alex Chen",
+            "text": "What timeframe do you find works best for RSI divergence? I've had more success on the 4h and daily charts than on shorter timeframes.",
+            "date": "2025-05-16T13:22:00Z",
+            "parent_id": None
         }
     ]
 
@@ -185,19 +331,19 @@ if 'users' not in st.session_state:
     st.session_state.users = [
         {
             "id": "1",
-            "name": "Alex Johnson",
+            "name": "Sarah Johnson",
             "karma": 387,
             "followed": False
         },
         {
             "id": "2",
-            "name": "Maya Rodriguez",
+            "name": "Michael Brown",
             "karma": 259,
             "followed": False
         },
         {
             "id": "3",
-            "name": "Tao Chen",
+            "name": "Alex Chen",
             "karma": 412,
             "followed": False
         }
@@ -206,7 +352,7 @@ if 'users' not in st.session_state:
 if 'current_user' not in st.session_state:
     st.session_state.current_user = {
         "id": "1",
-        "name": "Alex Johnson"
+        "name": "Sarah Johnson"
     }
 
 # Initialize navigation state
@@ -259,32 +405,28 @@ def create_strategy(title, description, visibility):
         "date": datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
         "likes": 0,
         "liked": False,
+        "comments": 0,
         "visibility": visibility
     }
     st.session_state.strategies.insert(0, new_strategy)
 
-# Header and Navigation
-st.header("Knead Strategy Forum")
+# Custom header with purple background
+st.markdown("""
+<div class="header">
+    <h1>Knead Strategy Forum</h1>
+</div>
+""", unsafe_allow_html=True)
 
-col1, col2 = st.columns([7, 2])
+# Navigation for home or strategy creation
+col1, col2 = st.columns([3, 1])
+with col1:
+    search_term = st.text_input("Search strategies...", placeholder="Search strategies...")
 with col2:
-    col2a, col2b = st.columns(2)
-    with col2a:
-        if st.button("Home", key="nav_home"):
-            st.session_state.page = 'home'
-            st.session_state.view_strategy_id = None
-            st.session_state.view_author_id = None
-    with col2b:
-        if st.button("New Strategy", key="nav_new"):
-            st.session_state.page = 'new_strategy'
-            st.session_state.view_strategy_id = None
-            st.session_state.view_author_id = None
+    if st.button("New Strategy", key="new_strategy_btn"):
+        st.session_state.page = 'new_strategy'
 
 # Main Content
 if st.session_state.page == 'home':
-    # Search and filter 
-    search_term = st.text_input("Search strategies...")
-    
     # Author filter display
     if st.session_state.view_author_id:
         author = next((u for u in st.session_state.users if u["id"] == st.session_state.view_author_id), None)
@@ -309,37 +451,36 @@ if st.session_state.page == 'home':
         st.warning("No strategies found matching your criteria.")
     
     for idx, strategy in enumerate(filtered_strategies):
-        st.markdown(f'<div class="card">', unsafe_allow_html=True)
-        
-        # Strategy title and meta
-        st.markdown(f'<div class="strategy-title">{strategy["title"]}</div>', unsafe_allow_html=True)
-        
-        # Author and date
-        auth_col, date_col = st.columns([1, 1])
-        with auth_col:
-            if st.button(f"By {strategy['author_name']}", key=f"author_{idx}"):
-                st.session_state.view_author_id = strategy["author_id"]
-        with date_col:
-            st.markdown(f'<div style="text-align: right">{format_date(strategy["date"])}</div>', unsafe_allow_html=True)
-        
-        # Strategy description
-        st.markdown(f'<div class="strategy-description">{get_preview(strategy["description"])}</div>', unsafe_allow_html=True)
+        # Card with title and author on left, likes on right
+        st.markdown(f'''
+        <div class="strategy-card" style="position: relative;">
+            <div class="like-area">
+                <span class="like-count">{strategy["likes"]}</span>
+            </div>
+            <h2 class="strategy-title">{strategy["title"]}</h2>
+            <div class="author-line">by {strategy["author_name"]}</div>
+            <div class="strategy-description">{get_preview(strategy["description"])}</div>
+            <div class="card-footer">
+                <div class="comments-count">
+                    <span>💬 {strategy["comments"]} comments</span>
+                </div>
+                <div class="date">
+                    {format_date(strategy["date"])}
+                </div>
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
         
         # Action buttons
-        view_col, like_col, comment_col = st.columns([1, 1, 5])
-        with view_col:
+        col1, col2 = st.columns(2)
+        with col1:
             if st.button("View Details", key=f"view_{idx}"):
                 st.session_state.page = 'strategy_detail'
                 st.session_state.view_strategy_id = strategy["id"]
-        with like_col:
+        with col2:
             like_text = "Unlike" if strategy["liked"] else "Like"
-            if st.button(f"{like_text}", key=f"like_{idx}"):
+            if st.button(like_text, key=f"like_{idx}"):
                 toggle_like(strategy["id"])
-        with comment_col:
-            comment_count = len([c for c in st.session_state.comments if c["strategy_id"] == strategy["id"]])
-            st.markdown(f"<div style='text-align: right'>💬 {comment_count} comments</div>", unsafe_allow_html=True)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
 
 elif st.session_state.page == 'strategy_detail':
     # Get strategy details
@@ -355,53 +496,62 @@ elif st.session_state.page == 'strategy_detail':
             st.session_state.page = 'home'
         
         # Strategy details
-        st.markdown(f'<div class="card">', unsafe_allow_html=True)
-        st.markdown(f'<h2>{strategy["title"]}</h2>', unsafe_allow_html=True)
-        
-        auth_col, date_col = st.columns([1, 1])
-        with auth_col:
-            if st.button(f"Author: {strategy['author_name']}", key="detail_author"):
-                st.session_state.page = 'home'
-                st.session_state.view_author_id = strategy["author_id"]
-        with date_col:
-            st.markdown(f'<div style="text-align: right">{format_date(strategy["date"])}</div>', unsafe_allow_html=True)
-        
-        st.markdown(f'<div class="strategy-description">{strategy["description"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'''
+        <div class="strategy-card" style="position: relative;">
+            <div class="like-area">
+                <span class="like-count">{strategy["likes"]}</span>
+            </div>
+            <h2 class="strategy-title">{strategy["title"]}</h2>
+            <div class="author-line">by {strategy["author_name"]}</div>
+            <div class="strategy-description">{strategy["description"]}</div>
+            <div class="card-footer">
+                <div class="date">
+                    {format_date(strategy["date"])}
+                </div>
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
         
         # Like button
         like_text = "Unlike" if strategy["liked"] else "Like"
-        if st.button(f"{like_text} ({strategy['likes']})", key="detail_like"):
+        if st.button(f"{like_text}", key="detail_like"):
             toggle_like(strategy["id"])
-        
-        st.markdown('</div>', unsafe_allow_html=True)
         
         # Strategy metrics
         st.subheader("Strategy Metrics")
         
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.markdown('<div class="metric-value">68%</div>', unsafe_allow_html=True)
-            st.markdown('<div class="metric-label">Win Rate</div>', unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('''
+            <div class="metric-card">
+                <div class="metric-value">68%</div>
+                <div class="metric-label">Win Rate</div>
+            </div>
+            ''', unsafe_allow_html=True)
         
         with col2:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.markdown('<div class="metric-value">1:2.5</div>', unsafe_allow_html=True)
-            st.markdown('<div class="metric-label">Risk-Reward</div>', unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('''
+            <div class="metric-card">
+                <div class="metric-value">1:2.5</div>
+                <div class="metric-label">Risk-Reward</div>
+            </div>
+            ''', unsafe_allow_html=True)
         
         with col3:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.markdown('<div class="metric-value">12.4%</div>', unsafe_allow_html=True)
-            st.markdown('<div class="metric-label">Max Drawdown</div>', unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('''
+            <div class="metric-card">
+                <div class="metric-value">12.4%</div>
+                <div class="metric-label">Max Drawdown</div>
+            </div>
+            ''', unsafe_allow_html=True)
         
         with col4:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.markdown('<div class="metric-value">1.8</div>', unsafe_allow_html=True)
-            st.markdown('<div class="metric-label">Sharpe Ratio</div>', unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('''
+            <div class="metric-card">
+                <div class="metric-value">1.8</div>
+                <div class="metric-label">Sharpe Ratio</div>
+            </div>
+            ''', unsafe_allow_html=True)
         
         # Comments section
         st.subheader("Comments")
@@ -412,44 +562,50 @@ elif st.session_state.page == 'strategy_detail':
             submitted = st.form_submit_button("Post Comment")
             if submitted and new_comment:
                 add_comment(strategy["id"], new_comment)
+                for s in st.session_state.strategies:
+                    if s["id"] == strategy["id"]:
+                        s["comments"] += 1
         
         # Display comments
-        root_comments = [c for c in st.session_state.comments if c["strategy_id"] == strategy["id"] and c["parent_id"] is None]
-        root_comments.sort(key=lambda x: x["date"], reverse=True)
+        strategy_comments = [c for c in st.session_state.comments if c["strategy_id"] == strategy["id"] and c["parent_id"] is None]
+        strategy_comments.sort(key=lambda x: x["date"], reverse=True)
         
-        if not root_comments:
+        if not strategy_comments:
             st.info("No comments yet. Be the first to comment!")
         
-        for idx, comment in enumerate(root_comments):
-            st.markdown(f'<div class="comment-card">', unsafe_allow_html=True)
+        for idx, comment in enumerate(strategy_comments):
+            st.markdown(f'''
+            <div class="comment-card">
+                <div style="display: flex; justify-content: space-between;">
+                    <span class="comment-author">{comment["author_name"]}</span>
+                    <span class="comment-date">{format_date(comment["date"])}</span>
+                </div>
+                <div class="comment-content">{comment["text"]}</div>
+            </div>
+            ''', unsafe_allow_html=True)
             
-            auth_col, date_col = st.columns([1, 1])
-            with auth_col:
-                if st.button(comment["author_name"], key=f"comment_author_{idx}"):
-                    st.session_state.page = 'home'
-                    st.session_state.view_author_id = comment["author_id"]
-            with date_col:
-                st.markdown(f'<div style="text-align: right">{format_date(comment["date"])}</div>', unsafe_allow_html=True)
-            
-            st.markdown(f"<p>{comment['text']}</p>", unsafe_allow_html=True)
+            # Author button
+            if st.button(f"View posts by {comment['author_name']}", key=f"comment_author_{idx}"):
+                st.session_state.page = 'home'
+                st.session_state.view_author_id = comment["author_id"]
             
             # Show replies
             replies = [c for c in st.session_state.comments if c["parent_id"] == comment["id"]]
             for reply_idx, reply in enumerate(replies):
-                st.markdown(f'<div class="reply-comment">', unsafe_allow_html=True)
+                st.markdown(f'''
+                <div class="reply-comment">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span class="comment-author">{reply["author_name"]}</span>
+                        <span class="comment-date">{format_date(reply["date"])}</span>
+                    </div>
+                    <div class="comment-content">{reply["text"]}</div>
+                </div>
+                ''', unsafe_allow_html=True)
                 
-                reply_auth_col, reply_date_col = st.columns([1, 1])
-                with reply_auth_col:
-                    if st.button(reply["author_name"], key=f"reply_author_{idx}_{reply_idx}"):
-                        st.session_state.page = 'home'
-                        st.session_state.view_author_id = reply["author_id"]
-                with reply_date_col:
-                    st.markdown(f'<div style="text-align: right">{format_date(reply["date"])}</div>', unsafe_allow_html=True)
-                
-                st.markdown(f"<p>{reply['text']}</p>", unsafe_allow_html=True)
-                st.markdown('</div>', unsafe_allow_html=True)
-            
-            st.markdown('</div>', unsafe_allow_html=True)
+                # Author button for reply
+                if st.button(f"View posts by {reply['author_name']}", key=f"reply_author_{idx}_{reply_idx}"):
+                    st.session_state.page = 'home'
+                    st.session_state.view_author_id = reply["author_id"]
 
 elif st.session_state.page == 'new_strategy':
     st.subheader("Create New Strategy")
