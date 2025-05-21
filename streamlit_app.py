@@ -226,11 +226,24 @@ elif st.session_state.view == 'strategyDetail':
             with subcols[1]:
                 if st.button(f"👍 {c['likes']}", key=f"c_like_{c['id']}"):
                     toggle_like_comment(strat['id'], c['id'])
-        with st.form("comment_form"):
-            com = st.text_area("Add a comment...", key='comment_text')
-            if st.form_submit_button("Post Comment") and com.strip():
-                strat['comments'].append({'id':len(strat['comments'])+1,'author':'You','content':com,'likes':0,'liked':False})
+        # Add comment form
+        comment_form = st.form(key="comment_form")
+        com = comment_form.text_area("Add a comment...", key="comment_text")
+        submitted = comment_form.form_submit_button("Post Comment")
+        if submitted:
+            if com.strip():
+                strat['comments'].append({
+                    'id': len(strat['comments']) + 1,
+                    'author': 'You',
+                    'content': com,
+                    'likes': 0,
+                    'liked': False
+                })
+                # Clear the text area
+                st.session_state.comment_text = ""
                 st.experimental_rerun()
+            else:
+                st.warning("Please enter a comment before posting.")
 
 # USER PROFILE SIDEBAR
 if st.session_state.active_profile:
