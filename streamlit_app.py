@@ -119,7 +119,8 @@ def toggle_follow_user(uid):
         p['following'] = not p['following']
 
 # HEADER: Logo, Title, Page Label, Search Bar, New Strategy (single line)
-col_logo, col_title, col_page, col_search, col_button = st.columns([1,6,2,4,1])
+# Adjust column widths so button has enough space
+col_logo, col_title, col_page, col_search, col_button = st.columns([1,6,2,3,2])
 with col_logo:
     st.image(LOGO_PATH, width=60)
 with col_title:
@@ -141,10 +142,10 @@ with col_search:
         label_visibility='collapsed'
     )
 with col_button:
-    # Match font size of button to page label
-    button_html = f"<style>.stButton>button {{font-size:16px; height:36px;}}</style><button>{'New Strategy'}</button>"
-    if st.session_state.view == 'forum' and st.button('New Strategy'):
-        st.session_state.view = 'newStrategy'
+    # Ensure button text doesn't wrap
+    if st.session_state.view == 'forum':
+        if st.button('New Strategy', key='btn_new_strategy'):
+            st.session_state.view = 'newStrategy'
 
 st.markdown("---")
 
