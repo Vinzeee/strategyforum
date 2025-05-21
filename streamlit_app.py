@@ -118,11 +118,10 @@ def toggle_follow_user(uid):
     if p:
         p['following'] = not p['following']
 
-# HEADER: Logo, Forum Title, Page Name, New Strategy, then Search Bar below
-# First row: logo, title, page label, new strategy button
-col_logo, col_title, col_page, col_button = st.columns([1,6,2,1])
+# HEADER: Logo, Title, Page Label, Search Bar, New Strategy (single line)
+col_logo, col_title, col_page, col_search, col_button = st.columns([1,6,2,4,1])
 with col_logo:
-    st.image(LOGO_PATH, width=70)
+    st.image(LOGO_PATH, width=60)
 with col_title:
     st.markdown(
         "<h1 style='margin:0; padding:0; font-size:48px; line-height:1;'>Knead Strategy Forum</h1>",
@@ -131,19 +130,21 @@ with col_title:
 with col_page:
     labels = {'forum':'Home','newStrategy':'Create New','strategyDetail':'Details'}
     st.markdown(
-        f"<h4 style='margin:0; padding:14px 0 0 0; text-align:right; font-weight:normal;'>{labels[st.session_state.view]}</h4>",
+        f"<h4 style='margin:0; padding:14px 0 0 0; text-align:right; font-size:16px; line-height:1; font-weight:normal;'>{labels[st.session_state.view]}</h4>",
         unsafe_allow_html=True
     )
+with col_search:
+    st.session_state.search = st.text_input(
+        label='',
+        value=st.session_state.search,
+        placeholder='Search strategies...',
+        label_visibility='collapsed'
+    )
 with col_button:
-    if st.session_state.view == 'forum' and st.button("New Strategy"):
+    # Match font size of button to page label
+    button_html = f"<style>.stButton>button {{font-size:16px; height:36px;}}</style><button>{'New Strategy'}</button>"
+    if st.session_state.view == 'forum' and st.button('New Strategy'):
         st.session_state.view = 'newStrategy'
-
-# Second row: Search bar under title
-col_logo2, col_search2, _ = st.columns([1,6,3])
-with col_logo2:
-    st.empty()
-with col_search2:
-    st.session_state.search = st.text_input("🔍 Search strategies...", value=st.session_state.search, label_visibility='collapsed')
 
 st.markdown("---")
 
