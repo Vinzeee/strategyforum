@@ -12,8 +12,8 @@ initial_strategies = [
     {
         "id": 1,
         "title": "Moving Average Crossover Strategy",
-        "author": "Sarah Johnson",
-        "authorId": "sarah123",
+        "author": "Evan Asbury",
+        "authorId": "evan123",
         "description": (
             "This strategy identifies trend reversals by tracking when shorter-term moving averages "
             "cross above or below longer-term moving averages. When the 50-day MA crosses above the "
@@ -26,14 +26,14 @@ initial_strategies = [
         "visibility": "public",
         "comments": [
             {"id": 1, "author": "Mark Wilson", "content": "I've been using a variant of this strategy with good results. Have you tried adjusting the timeframes?", "likes": 7, "liked": False},
-            {"id": 2, "author": "Alex Chen",     "content": "What about adding volume confirmation to reduce false signals?", "likes": 3, "liked": False}
+            {"id": 2, "author": "Phillip Bol",     "content": "What about adding volume confirmation to reduce false signals?", "likes": 3, "liked": False}
         ]
     },
     {
         "id": 2,
         "title": "RSI Divergence Trading",
-        "author": "Michael Brown",
-        "authorId": "mike_b",
+        "author": "Vinay Jukanti",
+        "authorId": "vinz",
         "description": (
             "This strategy focuses on identifying divergences between price action and RSI indicator. "
             "When price makes a higher high but RSI makes a lower high (bearish divergence), it suggests "
@@ -46,14 +46,14 @@ initial_strategies = [
         "visibility": "public",
         "comments": [
             {"id": 1, "author": "Emma Davis",    "content": "I've had mixed results with this. What timeframe do you find works best?", "likes": 5, "liked": False},
-            {"id": 2, "author": "Sarah Johnson","content": "Great strategy. I combine this with volume analysis for better results.", "likes": 8, "liked": False}
+            {"id": 2, "author": "Evan Asbury","content": "Great strategy. I combine this with volume analysis for better results.", "likes": 8, "liked": False}
         ]
     },
     {
         "id": 3,
         "title": "Ichimoku Cloud Strategy",
-        "author": "Alex Chen",
-        "authorId": "alex_c",
+        "author": "Phillip Bol",
+        "authorId": "philb",
         "description": (
             "Using the Ichimoku Cloud indicator to identify trend direction, support/resistance levels, "
             "and potential entry/exit points. When price is above the cloud, the trend is bullish; when below, bearish. "
@@ -68,9 +68,9 @@ initial_strategies = [
 ]
 
 user_profiles = {
-    "sarah123": {"name": "Sarah Johnson", "karma": 387, "strategies": 14, "following": False},
-    "mike_b":     {"name": "Michael Brown", "karma": 256, "strategies": 8,  "following": True},
-    "alex_c":     {"name": "Alex Chen",     "karma": 192, "strategies": 6,  "following": False},
+    "evan123": {"name": "Evan Asbury", "karma": 387, "strategies": 14, "following": False},
+    "vinz":     {"name": "Vinay Jukanti", "karma": 256, "strategies": 8,  "following": True},
+    "philb":     {"name": "Phillip Bol",     "karma": 192, "strategies": 6,  "following": False},
     "emma_d":     {"name": "Emma Davis",    "karma": 145, "strategies": 4,  "following": False},
 }
 
