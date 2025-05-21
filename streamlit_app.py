@@ -122,7 +122,7 @@ def toggle_follow_user(uid):
 # First row: logo, title, page label, new strategy button
 col_logo, col_title, col_page, col_button = st.columns([1,6,2,1])
 with col_logo:
-    st.image(LOGO_PATH, width=60)
+    st.image(LOGO_PATH, width=100)
 with col_title:
     st.markdown(
         "<h1 style='margin:0; padding:0; font-size:48px; line-height:1;'>Knead Strategy Forum</h1>",
