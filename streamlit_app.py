@@ -4,6 +4,9 @@ from datetime import datetime
 # Page configuration
 st.set_page_config(page_title="Knead Strategy Forum", layout="wide")
 
+# Path to company logo (place your logo file in the same folder as this script)
+LOGO_PATH = "company_logo.png"
+
 # Initial data definitions
 initial_strategies = [
     {
@@ -72,23 +75,18 @@ user_profiles = {
 }
 
 # Initialize session state
-if 'strategies' not in st.session_state:
-    st.session_state.strategies = initial_strategies.copy()
-if 'user_profiles' not in st.session_state:
-    st.session_state.user_profiles = user_profiles.copy()
-
-if 'view' not in st.session_state:
-    st.session_state.view = 'forum'
-if 'selected_id' not in st.session_state:
-    st.session_state.selected_id = None
-if 'active_profile' not in st.session_state:
-    st.session_state.active_profile = None
-if 'search' not in st.session_state:
-    st.session_state.search = ''
-if 'new_strategy' not in st.session_state:
-    st.session_state.new_strategy = {"title": "", "description": "", "visibility": "public"}
-if 'new_comment' not in st.session_state:
-    st.session_state.new_comment = ""
+for key, default in {
+    'strategies': initial_strategies.copy(),
+    'user_profiles': user_profiles.copy(),
+    'view': 'forum',
+    'selected_id': None,
+    'active_profile': None,
+    'search': '',
+    'new_strategy': {"title": "", "description": "", "visibility": "public"},
+    'new_comment': ""
+}.items():
+    if key not in st.session_state:
+        st.session_state[key] = default
 
 # Helper functions
 
@@ -120,33 +118,39 @@ def toggle_follow_user(uid):
     if p:
         p['following'] = not p['following']
 
-# Header with search and New Strategy
-col1, col2 = st.columns([4, 1])
-with col1:
+# HEADER: Logo, Forum Title, Page Name, Search, New Strategy
+col_logo, col_title, col_page, col_search, col_button = st.columns([1,4,2,4,1])
+with col_logo:
+    st.image(LOGO_PATH, width=60)
+with col_title:
+    st.markdown("<h1 style='margin:0; padding-top:10px;'>Knead Strategy Forum</h1>", unsafe_allow_html=True)
+with col_page:
+    labels = {'forum':'Home','newStrategy':'Create New','strategyDetail':'Details'}
+    st.markdown(f"<h4 style='margin:0; padding-top:12px; text-align:right;'>{labels[st.session_state.view]}</h4>", unsafe_allow_html=True)
+with col_search:
     st.session_state.search = st.text_input("🔍 Search strategies...", value=st.session_state.search)
-with col2:
+with col_button:
     if st.session_state.view == 'forum' and st.button("New Strategy"):
         st.session_state.view = 'newStrategy'
-
 st.markdown("---")
 
-# Forum list view
+# FORUM LIST VIEW
 if st.session_state.view == 'forum':
     filtered = [s for s in st.session_state.strategies
-                if st.session_state.search.lower() in s['title'].lower() or st.session_state.search.lower() in s['author'].lower()]
-
+                if st.session_state.search.lower() in s['title'].lower()
+                or st.session_state.search.lower() in s['author'].lower()]
     if not filtered:
         st.info("No strategies match your search.")
     for s in filtered:
-        cols = st.columns([6, 1, 1, 1])
+        cols = st.columns([6,1,1,1])
         with cols[0]:
             st.markdown(f"### {s['title']}")
-            if st.button(f"by {s['author']}", key=f"author_{s['id']}"):
+            if st.button(f"by {s['author']}", key=f"auth_{s['id']}"):
                 st.session_state.active_profile = s['authorId']
             st.write(format_date(s['date']))
             st.write(s['description'])
         with cols[1]:
-            if st.button(f"💬 {len(s['comments'])}", key=f"comments_{s['id']}"):
+            if st.button(f"💬 {len(s['comments'])}", key=f"comms_{s['id']}"):
                 st.session_state.selected_id = s['id']
                 st.session_state.view = 'strategyDetail'
         with cols[2]:
@@ -157,7 +161,7 @@ if st.session_state.view == 'forum':
                 st.session_state.selected_id = s['id']
                 st.session_state.view = 'strategyDetail'
 
-# New strategy form view
+# CREATE NEW STRATEGY VIEW
 elif st.session_state.view == 'newStrategy':
     if st.button("← Back to Forum"):
         st.session_state.view = 'forum'
@@ -165,9 +169,9 @@ elif st.session_state.view == 'newStrategy':
     ns = st.session_state.new_strategy
     ns['title'] = st.text_input("Title", ns['title'])
     ns['description'] = st.text_area("Description", ns['description'], height=200)
-    ns['visibility'] = st.radio("Visibility", ['public', 'private'], index=0 if ns['visibility']=='public' else 1)
+    ns['visibility'] = st.radio("Visibility", ['public','private'], index=0 if ns['visibility']=='public' else 1)
     if st.button("Post Strategy"):
-        new_id = max([s['id'] for s in st.session_state.strategies]) + 1
+        new_id = max(s['id'] for s in st.session_state.strategies) + 1
         entry = {
             'id': new_id,
             'title': ns['title'],
@@ -182,59 +186,47 @@ elif st.session_state.view == 'newStrategy':
         }
         st.session_state.strategies.insert(0, entry)
         st.success("Strategy posted!")
-        st.session_state.new_strategy = {"title": "", "description": "", "visibility": "public"}
+        st.session_state.new_strategy = {"title":"","description":"","visibility":"public"}
         st.session_state.view = 'forum'
 
-# Detailed strategy + comments view
+# STRATEGY DETAIL + COMMENTS VIEW
 elif st.session_state.view == 'strategyDetail':
-    strat = next((x for x in st.session_state.strategies if x['id'] == st.session_state.selected_id), None)
+    strat = next((x for x in st.session_state.strategies if x['id']==st.session_state.selected_id), None)
     if strat:
         if st.button("← Back to Forum"):
             st.session_state.view = 'forum'
         st.title(strat['title'])
-        if st.button(f"by {strat['author']}", key="detail_author"):
+        if st.button(f"by {strat['author']}", key="detail_auth"):
             st.session_state.active_profile = strat['authorId']
-        like_label = f"💖 {strat['likes']}"
-        if st.button(like_label, key="detail_like"):
+        if st.button(f"💖 {strat['likes']}", key="det_like"):
             toggle_like_strategy(strat['id'])
         st.write(format_date(strat['date']))
         st.write("---")
         st.write(strat['description'])
         st.subheader(f"Comments ({len(strat['comments'])})")
-
-        # Existing comments
         for c in strat['comments']:
-            ccols = st.columns([9, 1])
-            with ccols[0]:
+            subcols = st.columns([9,1])
+            with subcols[0]:
                 st.markdown(f"**{c['author']}**: {c['content']}")
-            with ccols[1]:
-                if st.button(f"👍 {c['likes']}", key=f"clike_{strat['id']}_{c['id']}"):
+            with subcols[1]:
+                if st.button(f"👍 {c['likes']}", key=f"c_like_{c['id']}"):
                     toggle_like_comment(strat['id'], c['id'])
-        # Add comment form
-        with st.form(key='comment_form'):
-            comment_input = st.text_area("Add a comment...", key='comment_input')
-            submitted = st.form_submit_button("Post Comment")
-            if submitted and comment_input.strip():
-                new_c = {
-                    'id': len(strat['comments']) + 1,
-                    'author': 'You',
-                    'content': comment_input,
-                    'likes': 0,
-                    'liked': False
-                }
-                strat['comments'].append(new_c)
+        with st.form("comment_form"):
+            com = st.text_area("Add a comment...", key='comment_text')
+            if st.form_submit_button("Post Comment") and com.strip():
+                strat['comments'].append({'id':len(strat['comments'])+1,'author':'You','content':com,'likes':0,'liked':False})
                 st.experimental_rerun()
 
-# User profile sidebar
+# USER PROFILE SIDEBAR
 if st.session_state.active_profile:
     profile = st.session_state.user_profiles.get(st.session_state.active_profile)
     if profile:
         st.sidebar.header("User Profile")
         st.sidebar.write(f"**{profile['name']}**")
-        st.sidebar.write(f"Karma Score: {profile['karma']}")
-        st.sidebar.write(f"Strategies Posted: {profile['strategies']}")
-        follow_label = "Unfollow" if profile['following'] else "Follow"
-        if st.sidebar.button(follow_label):
+        st.sidebar.write(f"Karma: {profile['karma']}")
+        st.sidebar.write(f"Strategies: {profile['strategies']}")
+        follow_lbl = "Unfollow" if profile['following'] else "Follow"
+        if st.sidebar.button(follow_lbl):
             toggle_follow_user(st.session_state.active_profile)
-        if st.sidebar.button("Close Profile"):
+        if st.sidebar.button("Close"):
             st.session_state.active_profile = None
